@@ -1,23 +1,20 @@
 import numpy as np
-from Stage1 import *
+from stage1 import *
 
-test1 = Variable(np.array(2.0))
-print(test1.data)
+def f():
+    x = Variable(np.array(0.5))
 
-f1 = Square()
-f2 = Exp()
+    a = square(x)
+    b = exp(a)
+    y = square(b)
+    y.backward()
 
-a1 = f1(test1)
-a2 = f2(a1)
-a3 = f1(a2)
-print(a3.data)
+    return x.gradient
 
-def f(x):
-    A = Square()
-    B = Exp()
-    C = Square()
-    return C(B(A(x)))
+def test(x):
+    return square(exp(square(x)))
 
+test2 = numerical_diff(test, Variable(np.array(0.5)))
+print('数値微分', test2)
 
-test2 = numerical_deff(f, Variable(np.array(0.5)))
-print(test2)
+print('逆伝播', f())
