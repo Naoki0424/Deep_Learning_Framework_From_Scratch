@@ -1,6 +1,6 @@
 import unittest
 import sys
-sys.path.append(r'/Users/tsunodanaoki/work/Python/DeZero/')
+sys.path.append(r'../')
 from stage1 import *
 import numpy as np
 
