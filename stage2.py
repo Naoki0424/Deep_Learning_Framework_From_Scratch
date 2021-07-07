@@ -3,6 +3,7 @@ import numpy as np
 class Variable:
     '変数を保持するクラス'
     def __init__(self, data):
+        '初期化を行う'
         # パラメータのdataはndarray型のみ許可する
         if data is not None:
             if not isinstance(data, np.ndarray):
@@ -14,12 +15,12 @@ class Variable:
         # 関数（生みの親）
         self.creator = None
     
-    # 生みの親を設定する
     def set_creator(self, func):
+        '生みの親を設定する'
         self.creator = func
     
-    # 逆伝播を行う
     def backward(self):
+        '逆伝播を行う'
         # 逆伝播で計算された値がない時は1.0を設定する。
         # この時、形状とデータ型は順伝播の値に合わせる
         if self.gradient is None:
@@ -48,9 +49,11 @@ class Variable:
 
 class Function:
     '関数の親クラス'
-    # __call__はPythonの特殊メソッド
-    # f = Function()としたときにf()で__call__を呼び出すことができる
     def __call__(self, *inputs):
+        '''
+        __call__はPythonの特殊メソッド
+        f = Function()としたときにf()で__call__を呼び出すことができる
+        '''
         # 入力値を全て取り出し配列に保持する
         xs = [x.data for x in inputs]
         # 入力された値を用いて計算を行う
@@ -70,14 +73,18 @@ class Function:
         # 計算結果を返却する。返却値のタプルのサイズが1より大きくない場合は最初の要素のみ返却する
         return outputs if len(outputs) > 1 else outputs[0]
 
-    # 順伝播の計算。計算ロジックを子クラスで実装する
-    # 小クラスでforwardが実装されていない時は明示的にErrorを発生させる
     def forward(self, xs):
+        '''
+        順伝播の計算。計算ロジックを子クラスで実装する
+        子クラスでforwardが実装されていない時は明示的にErrorを発生させる
+        '''
         raise NotImplementedError()
 
-    # 逆伝播の計算。計算ロジックを子クラスで実装する
-    # 小クラスでbackwardが実装されていない時は明示的にErrorを発生させる
     def backward(self, x):
+        '''
+        逆伝播の計算。計算ロジックを子クラスで実装する
+        小クラスでbackwardが実装されていない時は明示的にErrorを発生させる
+        '''
         raise NotImplementedError()
 
 class Square(Function):
