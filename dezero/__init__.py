@@ -6,4 +6,9 @@ from dezero.core_simple import as_array
 from dezero.core_simple import as_variable
 from dezero.core_simple import setup_variable
 
+# テストのために追加
+from dezero.utils import get_dot_graph
+from dezero.utils import plot_dot_graph
+from dezero.core_simple import *
+
 setup_variable()

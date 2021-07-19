@@ -1,6 +1,7 @@
 import numpy as np
 import weakref
 import contextlib
+import math
 
 class Configuration:
     '逆伝播を行うかの設定'
@@ -290,3 +291,30 @@ def setup_variable():
     Variable.__truediv__ = div
     Variable.__rtruediv__ = rdiv
     Variable.__pow__ = pow
+
+
+# Stage3
+class Sin(Function):
+    def forward(self, x):
+        return np.sin(x)
+    def backward(self, gy):
+        return np.cos(self.inputs[0].data) * gy
+
+def sin(x):
+    return Sin()(x)
+
+def my_sin(x, threshold=0.0001):
+    y = 0
+    for i in range(100000):
+        c = (-1) ** i / math.factorial(2 * i + 1)
+        t = c * x ** (2 * i + 1)
+        y = y + t
+        if abs(t.data) < threshold:
+            break
+    return y
+
+def rosenbrock(x0, x1):
+    y = 100 * (x1 - x0 ** 2) ** 2 + (x0 - 1) ** 2
+    return y
+
+
