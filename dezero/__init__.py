@@ -21,6 +21,6 @@ else:
 # テストのために追加
 from dezero.utils import get_dot_graph
 from dezero.utils import plot_dot_graph
-# from dezero.core_simple import *
+import dezero.functions as F
 
 setup_variable()
