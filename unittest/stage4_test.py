@@ -36,3 +36,16 @@ class util(unittest.TestCase):
         self.assertEqual(x.data.shape, (3, 2))
         self.assertEqual(x.gradient.shape, (3, 2))
         self.assertEqual(y.data.shape, (2, 3))
+
+    def test_broadcast_to(self):
+        x0 = Variable(np.array([1, 2, 3]))
+        x1 = Variable(np.array([10]))
+        y = x0 + x1
+
+        y.backward()
+
+        print(x0.gradient)
+        print(x1.gradient)
+
+        # self.assertEqual(x0.gradient, Variable(np.array([1, 1, 1])))
+        # self.assertEqual(x1.gradient, [3])

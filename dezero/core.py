@@ -112,6 +112,9 @@ class Variable:
     def transpose(self):
         return dezero.functions.transpose(self)
 
+    def sum(self, axis=None, keepdims=False):
+        return dezero.functions.sum(self, axis, keepdims)
+
     @property
     def shape(self):
         '''形状
@@ -160,7 +163,7 @@ class Function:
         # 上の返却値がタプルではない時はタプルに変換する
         if not isinstance(ys, tuple):
             ys = (ys,)
-        # Variable型への変換。スカラ値を考慮しながら（as_arrayにて）出力値を設定する
+        # 出力値をVariable型への変換。スカラ値を考慮しながら（as_arrayにて）出力値を設定する
         outputs = [Variable(as_array(y)) for y in ys]
         # メモリの効率的使用のため、逆伝播の利用に応じて変数の設定を行う
         if Configuration.enable_backdrop:
@@ -189,17 +192,22 @@ class Function:
     def backward(self, x):
         '''
         逆伝播の計算。計算ロジックを子クラスで実装する
-        小クラスでbackwardが実装されていない時は明示的にErrorを発生させる
+        子クラスでbackwardが実装されていない時は明示的にErrorを発生させる
         '''
         raise NotImplementedError()
 
 class Add(Function):
     def forward(self, x0, x1):
+        self.x0_shape, self.x1_shape = x0.shape, x1.shape
         y = x0 + x1
         return y
 
     def backward(self, gy):
-        return gy, gy
+        gx0, gx1 = gy, gy
+        if self.x0_shape != self.x1_shape:
+            gx0 = dezero.functions.sum_to(gx0, self.x0_shape)
+            gx1 = dezero.functions.sum_to(gx0, self.x1_shape)
+        return gx0, gx1
 
 class Mul(Function):
     def forward(self, x0, x1):
